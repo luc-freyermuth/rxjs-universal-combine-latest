@@ -185,4 +185,24 @@ describe('universalCombineLatest', () => {
       });
     });
   });
+
+  it('should not affect function in objects it transforms', () => {
+    scheduler.run(({ expectObservable, cold }) => {
+      const testFunction = (name: string) => `Hello ${name}`;
+
+      const generatedObservable$ = universalCombineLatest([
+        cold('ab', { a: 1, b: 2 }),
+        {
+          y1: cold('a', { a: 1 }),
+        },
+        [testFunction],
+      ]);
+
+      expectObservable(generatedObservable$).toBe('ab', {
+        a: [1, { y1: 1 }, [testFunction]],
+
+        b: [2, { y1: 1 }, [testFunction]],
+      });
+    });
+  });
 });

@@ -25,4 +25,15 @@ describe('universalCombineLatest', () => {
       expectObservable(generatedObservable$).toBe('(a|)', { a: 1 });
     });
   });
+
+  it('should combine an array of observables into a single observable of array', () => {
+    scheduler.run(({ expectObservable, cold }) => {
+      const generatedObservable$ = universalCombineLatest([
+        cold('a', { a: 1 }),
+        cold('ab', { a: 1, b: 2 }),
+      ]);
+
+      expectObservable(generatedObservable$).toBe('ab', { a: [1, 1], b: [1, 2] });
+    });
+  });
 });

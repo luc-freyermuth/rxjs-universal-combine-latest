@@ -14,7 +14,7 @@ export function universalCombineLatest(obj: any): Observable<any> {
     return combineLatestFallbackWhenEmpty(obj.map(arrayItem => universalCombineLatest(arrayItem)));
   }
 
-  if (typeof obj === 'object') {
+  if (typeof obj === 'object' && obj !== null) {
     return combineLatestFallbackWhenEmpty(
       Object.entries(obj).map(([key, value]) => {
         return universalCombineLatest(value).pipe(map(v => ({ [key]: v })));

@@ -26,6 +26,14 @@ describe('universalCombineLatest', () => {
     });
   });
 
+  it('should return a synchronous observable of null when null is inputed', () => {
+    scheduler.run(({ expectObservable }) => {
+      const generatedObservable$ = universalCombineLatest(null);
+
+      expectObservable(generatedObservable$).toBe('(a|)', { a: null });
+    });
+  });
+
   it('should combine an array of observables into a single observable of arrays', () => {
     scheduler.run(({ expectObservable, cold }) => {
       const generatedObservable$ = universalCombineLatest([

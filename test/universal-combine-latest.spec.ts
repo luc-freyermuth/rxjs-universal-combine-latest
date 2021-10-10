@@ -174,14 +174,14 @@ describe('universalCombineLatest', () => {
           y1: cold('a', { a: 1 }),
           y2: cold('ab', { a: 1, b: 2 }),
         },
-        [10, cold('a', { a: 42 })],
+        [null, cold('a', { a: 42 })],
       ]);
 
       expectObservable(generatedObservable$).toBe('a(bc)', {
-        a: [1, { y1: 1, y2: 1 }, [10, 42]],
+        a: [1, { y1: 1, y2: 1 }, [null, 42]],
 
-        b: [2, { y1: 1, y2: 1 }, [10, 42]],
-        c: [2, { y1: 1, y2: 2 }, [10, 42]],
+        b: [2, { y1: 1, y2: 1 }, [null, 42]],
+        c: [2, { y1: 1, y2: 2 }, [null, 42]],
       });
     });
   });

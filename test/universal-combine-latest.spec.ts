@@ -48,4 +48,12 @@ describe('universalCombineLatest', () => {
       expectObservable(generatedObservable$).toBe('ab', { a: [1, 1, 42], b: [1, 2, 42] });
     });
   });
+
+  it('should generate a synchronous observable of empty array when an empty array is inputed', () => {
+    scheduler.run(({ expectObservable }) => {
+      const generatedObservable$ = universalCombineLatest([]);
+
+      expectObservable(generatedObservable$).toBe('(a|)', { a: [] });
+    });
+  });
 });

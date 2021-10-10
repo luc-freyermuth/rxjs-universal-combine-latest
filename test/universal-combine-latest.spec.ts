@@ -82,4 +82,12 @@ describe('universalCombineLatest', () => {
       });
     });
   });
+
+  it('should return a synchronous observable of empty objects when given an empty object', () => {
+    scheduler.run(({ expectObservable }) => {
+      const generatedObservable$ = universalCombineLatest({});
+
+      expectObservable(generatedObservable$).toBe('(a|)', { a: {} });
+    });
+  });
 });

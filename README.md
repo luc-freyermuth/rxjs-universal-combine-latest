@@ -1,103 +1,94 @@
-# TSDX User Guide
+# `universalCombineLatest` generator function for rxjs
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+An rxjs generator similar to `combineLatest` that accepts any object as an input. 
 
-> This TSDX setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
+It combines all observables found in the object and generates an observable of objects of the same structure.
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
+It is very useful to generate complex observables by combining multiple sources while keeping readability and avoiding nesting `combineLatest` operators 
 
-## Commands
+## How to install
 
-TSDX scaffolds your new library inside `/src`.
-
-To run TSDX, use:
-
-```bash
-npm start # or yarn start
+```
+npm install rxjs-universal-combine-latest
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
+## Examples
 
-To do a one-off build, use `npm run build` or `yarn build`.
+```ts
+import { of } from 'rxjs';
+import { universalCombineLatest } from 'rxjs-universal-combine-latest';
 
-To run tests, use `npm test` or `yarn test`.
+// works with objects
+const first$ = universalCombineLatest({ name: of('Krauss'), age: of(52) });
+// will emit :
+// { name: 'Krauss', age: 52 }
 
-## Configuration
+// still works with arrays
+const middle$ = universalCombineLatest([ of('Eva'), of('Rudolf') ]);
+// will emit :
+// ['Eva', 'Rudolf']
 
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
+// all values in the source object do not have to be observables !
+const last$ = universalCombineLatest({ name: of('Rosa'), age: 35 });
+// will emit :
+// { name: 'Rosa', age: 35 }
 
-### Jest
+// objects and arrays can be deeply nested
+const family$ = universalCombineLatest(
+    { 
+        name: of('Kinzo'), 
+        age: 'old', 
+        children: [
+            {
+                name: 'Kraus'
+            },
+            {
+                name: of('Eva')
+            }
+        ]
+    }
+);
+// will emit :
+// { 
+//      name: 'Kinzo', 
+//      age: 'old', 
+//      children: [
+//          {
+//              name: 'Kraus'
+//          },
+//          {
+//              name: 'Eva'
+//          }
+//      ]
+// }
 
-Jest tests are set up to run with `npm test` or `yarn test`.
+// In a similar way to combineLatest, it will emit every time an observable emits after they all have emited at least once
+const aging$ = universalCombineLatest({ name: of('Rosa'), age: interval(1000).pipe(map(i => 35 + i)) });
+// will emit :
+// after 1s: { name: 'Rosa', age: 35 }
+// after 2s: { name: 'Rosa', age: 36 }
+// after 3s: { name: 'Rosa', age: 37 }
+// ...
 
-### Bundle Analysis
+// Empty array of objects will emit imediately
+const empty$ = universalCombineLatest([]);
+// will emit :
+// [] 
+// and complete imediately
+const emptyObj$ = universalCombineLatest({});
+// will emit :
+// {}
+// and complete imediately
 
-[`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
+// simple values generates observables that complete imediately
+const singleValue$ = universalCombineLatest('Magical Gohda chef');
+// will emit :
+// 'Magical Gohda chef'
+// and complete imediately
 
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
+// single observables are not affected and returned as is
+const beatoriche$ = universalCombineLatest(of('Beatrice'));
+// will emit :
+// 'Beatrice'
+// and complete imediately because the source observables behaves like this
 ```
-
-### Rollup
-
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
-
-### TypeScript
-
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
-
-## Continuous Integration
-
-### GitHub Actions
-
-Two actions are added by default:
-
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [`size-limit`](https://github.com/ai/size-limit)
-
-## Optimizations
-
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
-
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
-}
-```
-
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
-
-## Module Formats
-
-CJS, ESModules, and UMD module formats are supported.
-
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
-
-## Named Exports
-
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
-
-## Including Styles
-
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
-
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
-
-## Publishing to NPM
-
-We recommend using [np](https://github.com/sindresorhus/np).

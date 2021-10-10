@@ -125,4 +125,24 @@ describe('universalCombineLatest', () => {
       });
     });
   });
+
+  it('should combine a deeply nested object of observables and non-observables into an observable of objects of the same structure', () => {
+    scheduler.run(({ expectObservable, cold }) => {
+      const generatedObservable$ = universalCombineLatest({
+        x: cold('ab', { a: 1, b: 2 }),
+        y: {
+          y1: cold('a', { a: 1 }),
+          y2: cold('ab', { a: 1, b: 2 }),
+        },
+        z: 42,
+      });
+
+      expectObservable(generatedObservable$).toBe('a(bc)', {
+        a: { x: 1, y: { y1: 1, y2: 1 }, z: 42 },
+
+        b: { x: 2, y: { y1: 1, y2: 1 }, z: 42 },
+        c: { x: 2, y: { y1: 1, y2: 2 }, z: 42 },
+      });
+    });
+  });
 });

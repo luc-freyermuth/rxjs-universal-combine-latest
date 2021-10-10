@@ -34,6 +34,14 @@ describe('universalCombineLatest', () => {
     });
   });
 
+  it('should return a synchronous observable of undefined when undefined is inputed', () => {
+    scheduler.run(({ expectObservable }) => {
+      const generatedObservable$ = universalCombineLatest(undefined);
+
+      expectObservable(generatedObservable$).toBe('(a|)', { a: undefined });
+    });
+  });
+
   it('should combine an array of observables into a single observable of arrays', () => {
     scheduler.run(({ expectObservable, cold }) => {
       const generatedObservable$ = universalCombineLatest([

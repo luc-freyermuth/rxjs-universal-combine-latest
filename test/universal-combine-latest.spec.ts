@@ -47,7 +47,7 @@ describe('universalCombineLatest', () => {
       const generatedObservable$ = universalCombineLatest([
         cold('a', { a: 1 }),
         cold('ab', { a: 1, b: 2 }),
-      ]);
+      ] as const);
 
       expectObservable(generatedObservable$).toBe('ab', { a: [1, 1], b: [1, 2] });
     });
@@ -59,7 +59,7 @@ describe('universalCombineLatest', () => {
         cold('a', { a: 1 }),
         cold('ab', { a: 1, b: 2 }),
         42,
-      ]);
+      ] as const);
 
       expectObservable(generatedObservable$).toBe('ab', { a: [1, 1, 42], b: [1, 2, 42] });
     });
@@ -67,7 +67,7 @@ describe('universalCombineLatest', () => {
 
   it('should generate a synchronous observable of empty array when an empty array is inputed', () => {
     scheduler.run(({ expectObservable }) => {
-      const generatedObservable$ = universalCombineLatest([]);
+      const generatedObservable$ = universalCombineLatest([] as const);
 
       expectObservable(generatedObservable$).toBe('(a|)', { a: [] });
     });
@@ -175,7 +175,7 @@ describe('universalCombineLatest', () => {
           y2: cold('ab', { a: 1, b: 2 }),
         },
         [null, cold('a', { a: 42 })],
-      ]);
+      ] as const);
 
       expectObservable(generatedObservable$).toBe('a(bc)', {
         a: [1, { y1: 1, y2: 1 }, [null, 42]],
@@ -196,7 +196,7 @@ describe('universalCombineLatest', () => {
           y1: cold('a', { a: 1 }),
         },
         [testFunction],
-      ]);
+      ] as const);
 
       expectObservable(generatedObservable$).toBe('ab', {
         a: [1, { y1: 1 }, [testFunction]],

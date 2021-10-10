@@ -17,4 +17,12 @@ describe('universalCombineLatest', () => {
       expectObservable(generatedObservable$).toBe('a', { a: 1 });
     });
   });
+
+  it('should return a synchronous observable when a non-observable value is inputed', () => {
+    scheduler.run(({ expectObservable }) => {
+      const generatedObservable$ = universalCombineLatest(1);
+
+      expectObservable(generatedObservable$).toBe('(a|)', { a: 1 });
+    });
+  });
 });

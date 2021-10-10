@@ -15,13 +15,9 @@ export function universalCombineLatest(obj: any): Observable<any> {
   }
 
   if (typeof obj === 'object') {
-    console.log(obj);
     return combineLatest(
       Object.entries(obj).map(([key, value]) => {
-        if (isObservable(value)) {
-          return value.pipe(map(v => ({ [key]: v })));
-        }
-        return of(null);
+        return universalCombineLatest(value).pipe(map(v => ({ [key]: v })));
       })
     ).pipe(map(propsObservables => Object.assign({}, ...propsObservables)));
   }

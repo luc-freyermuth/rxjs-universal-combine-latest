@@ -67,4 +67,19 @@ describe('universalCombineLatest', () => {
       expectObservable(generatedObservable$).toBe('ab', { a: { x: 1, y: 1 }, b: { x: 1, y: 2 } });
     });
   });
+
+  it('should combine an object of observables and non-observables into an observable of objects of the same structure', () => {
+    scheduler.run(({ expectObservable, cold }) => {
+      const generatedObservable$ = universalCombineLatest({
+        x: cold('a', { a: 1 }),
+        y: cold('ab', { a: 1, b: 2 }),
+        z: 42,
+      });
+
+      expectObservable(generatedObservable$).toBe('ab', {
+        a: { x: 1, y: 1, z: 42 },
+        b: { x: 1, y: 2, z: 42 },
+      });
+    });
+  });
 });

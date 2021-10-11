@@ -1,6 +1,7 @@
 {
   "version": "1.0.1",
   "license": "MIT",
+  "repository": "https://github.com/luc-freyermuth/rxjs-universal-combine-latest",
   "keywords": [
     "rxjs",
     "generator",

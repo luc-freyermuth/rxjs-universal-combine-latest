@@ -1,5 +1,7 @@
 # `universalCombineLatest` generator function for rxjs
 
+[![rxjs-universal-combine-latest](https://img.shields.io/npm/v/rxjs-universal-combine-latest.svg)](https://www.npmjs.com/package/rxjs-universal-combine-latest)
+
 An rxjs generator similar to `combineLatest` that accepts any object as an input. 
 
 It combines all observables found in the object and generates an observable of objects of the same structure.
